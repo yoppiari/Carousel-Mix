@@ -71,13 +71,13 @@ You should see:
 ```
   VITE v4.4.9  ready in XXX ms
 
-  ➜  Local:   http://localhost:5173/
+  ➜  Local:   http://localhost:5174/
   ➜  Network: use --host to expose
 ```
 
 ### Step 5: Open the App
 
-Open your browser and go to: **http://localhost:5173**
+Open your browser and go to: **http://localhost:5174**
 
 🎉 **You're done!** The app should be running!
 

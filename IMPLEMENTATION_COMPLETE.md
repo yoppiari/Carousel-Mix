@@ -152,7 +152,7 @@ npm run dev
 
 ### Step 4: Open Browser
 
-Go to: **http://localhost:5173**
+Go to: **http://localhost:5174**
 
 ---
 
