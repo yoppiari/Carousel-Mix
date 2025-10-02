@@ -1,0 +1,23 @@
+// Carousel Mix Database Schema
+// Simple SQLite database for local development
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  title     String
+  type      String   @default("carousel")
+  content   String   // JSON stringified CarouselDocument
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([type])
+}
