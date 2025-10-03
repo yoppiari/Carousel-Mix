@@ -1,15 +1,15 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useCredits } from '@/contexts/CreditContext';
 import {
   Edit3,
   Package,
   Layers,
+  LogOut
 } from 'lucide-react';
+import { Button } from './ui/button';
 
 function Layout() {
-  const { user } = useAuth();
-  useCredits(); // Initialize credits context
+  const { user, logout } = useAuth();
 
   const navigation = [
     { name: 'Editor', href: '/editor', icon: Edit3 },
@@ -53,15 +53,25 @@ function Layout() {
           </div>
 
           <div className="border-t border-gray-200 p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-500">Credits</span>
-              <span className="text-lg font-semibold text-gray-900">
-                ∞
-              </span>
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <div className="text-sm font-medium text-gray-900">
+                  {user?.username}
+                </div>
+                <div className="text-xs text-gray-500">
+                  Logged in
+                </div>
+              </div>
             </div>
-            <div className="text-xs text-gray-500">
-              {user?.email}
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              onClick={logout}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
           </div>
         </nav>
 

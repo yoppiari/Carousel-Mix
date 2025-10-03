@@ -7,7 +7,21 @@
       "Bash(git config:*)",
       "Bash(cat:*)",
       "Bash(netstat:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(test:*)",
+      "Bash(npm install)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Read(//c/Users/yoppi/Downloads/**)",
+      "Bash(find:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(npx prisma migrate reset:*)",
+      "Bash(taskkill:*)",
+      "Bash(timeout:*)"
     ],
     "deny": [],
     "ask": []

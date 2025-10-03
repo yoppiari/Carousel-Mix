@@ -1,69 +1,78 @@
 # 🎨 Carousel Mix
 
-**Independent Carousel Generator** - Create stunning carousels for LinkedIn, Instagram, and social media.
+> Standalone carousel generator dengan 9 text styles untuk Instagram
+
+Carousel Mix adalah aplikasi independen untuk membuat carousel Instagram dengan sistem bulk generation. Generate multiple carousel sets dengan berbagai kombinasi gambar dan teks, lengkap dengan 9 pilihan text style yang menarik.
 
 ## ✨ Features
 
-- 🎯 **Visual Editor** - Drag & drop interface for easy carousel creation
-- 📝 **Text Elements** - Add titles, subtitles, and descriptions
-- 🖼️ **Image Support** - Upload and place images anywhere
-- 🎨 **Customization** - Themes, colors, fonts, and branding
-- 💾 **Project Management** - Save, load, and manage carousel projects
-- 📤 **Export** - PNG, PDF, and ZIP formats
-- 🔄 **Bulk Generation** - Create multiple carousel variations at once
+- **🔄 Bulk Generation**: Generate multiple carousel sets sekaligus
+- **🎨 9 Text Styles**: Modern, TikTok Outline, Instagram Gradient, Elegant, Classic, Minimalist, Cyber Y2K, Kinetic, Sketch
+- **👁️ Visual Preview**: Lihat preview semua text style sebelum generate
+- **💾 Project Management**: Save dan load multiple projects
+- **📦 ZIP Download**: Download hasil dalam format ZIP terorganisir
+- **♾️ Unlimited**: Tidak ada batasan kredit (local-only)
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-
-- Node.js 18+ installed
-- NPM or PNPM package manager
+- Node.js 18+
+- npm atau yarn
 
 ### Installation
-
 ```bash
-# 1. Install backend dependencies
-cd backend
-npm install
+# Clone repository
+git clone https://github.com/yoppiari/Carousel-Mix.git
+cd Carousel-Mix
 
-# 2. Setup database
-npx prisma generate
-npx prisma migrate dev --name init
+# Install backend dependencies
+cd backend && npm install && npx prisma generate && npx prisma migrate dev
 
-# 3. Install frontend dependencies
-cd ../frontend
-npm install
+# Install frontend dependencies
+cd ../frontend && npm install
 ```
 
-### Development
-
+### Running
 ```bash
-# Terminal 1: Start backend (port 3003)
-cd backend
-npm run dev
+# Terminal 1 - Backend
+cd backend && npm run dev
 
-# Terminal 2: Start frontend (port 5173)
-cd frontend
-npm run dev
+# Terminal 2 - Frontend  
+cd frontend && npm run dev
 ```
-
-Open [http://localhost:5174](http://localhost:5174) in your browser.
 
 ## 📖 Documentation
 
-See [MASTER_REFERENCE.md](MASTER_REFERENCE.md) for complete documentation.
+- 📚 [Full Documentation](./docs/README.md)
+- 🔌 [API Documentation](./docs/API.md)
+
+## 🎭 Text Styles
+
+| Style | Description |
+|-------|-------------|
+| Modern | Bold clean text dengan backdrop blur |
+| TikTok | Bold uppercase dengan stroke outline |
+| Instagram | Gradient background box |
+| Elegant | Script/handwritten dengan shadow |
+| Classic | Serif font dengan border |
+| Minimalist | Lightweight dengan letter spacing |
+| Cyber Y2K | Neon futuristik dengan glow |
+| Kinetic | RGB shift motion effect |
+| Sketch | Hand-drawn style |
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Express.js + TypeScript + Prisma + SQLite
-- **Frontend**: React + Vite + Zustand + Radix UI + Tailwind CSS
-- **Image Processing**: @napi-rs/canvas + sharp
-- **Export**: html-to-image + jspdf
+**Backend**: Express.js, TypeScript, SQLite, Prisma, @napi-rs/canvas
+**Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Radix UI
 
 ## 📝 License
 
-MIT
+MIT License
 
-## 🤝 Contributing
+## 👨‍💻 Credits
 
-This is a personal project. Feel free to fork and modify for your own use.
+Developed by Claude (Anthropic AI) | Maintained by [@yoppiari](https://github.com/yoppiari)
+
+---
+
+**Made with ❤️ using Claude Code**

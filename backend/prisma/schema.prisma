@@ -10,14 +10,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String    @id @default(cuid())
+  username  String    @unique
+  password  String    // Hashed password
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  projects  Project[]
+
+  @@index([username])
+}
+
 model Project {
   id        String   @id @default(cuid())
   title     String
   type      String   @default("carousel")
   content   String   // JSON stringified CarouselDocument
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([createdAt])
   @@index([type])
+  @@index([userId])
 }

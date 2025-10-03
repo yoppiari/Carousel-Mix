@@ -7,14 +7,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import TextStyleSelector from '@/components/TextStyleSelector';
-import StylePreviewGallery from '@/components/StylePreviewGallery';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Upload, Sparkles, AlertCircle, Download, CheckCircle, X } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { useCredits } from '@/contexts/CreditContext';
 import carouselService from '@/services/carousel.service';
 import projectService from '@/services/project.service';
 import '../styles/text-styles.css';
@@ -156,7 +154,6 @@ function BulkGeneratorPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
-  const { credits } = useCredits();
 
   // Only use projectId from URL, not from localStorage
   // This ensures clicking "Bulk Generator" menu always starts fresh
@@ -322,8 +319,7 @@ function BulkGeneratorPage() {
 
   const totalCombinations = calculateCombinations();
   const maxSets = totalCombinations; // Remove 100 limit - allow full possibilities
-  const totalCost = setsToGenerate; // 1 credit per set
-  const hasEnoughCredits = credits >= totalCost;
+  const hasEnoughCredits = true; // Always allow generation
   const estimatedTime = Math.ceil(setsToGenerate / 10); // Estimate 10 sets per minute
 
   // Update setsToGenerate when totalCombinations changes
@@ -509,14 +505,6 @@ function BulkGeneratorPage() {
       return;
     }
 
-    if (!hasEnoughCredits) {
-      toast({
-        title: 'Insufficient Credits',
-        description: `You need ${totalCost} credits but only have ${credits}`,
-        variant: 'destructive',
-      });
-      return;
-    }
 
     try {
       setIsGenerating(true);
@@ -1015,39 +1003,18 @@ function BulkGeneratorPage() {
 
                           {/* Cost and Time Estimate */}
                           <div className="text-xs text-gray-600 space-y-1">
-                            <div>Cost: <span className="font-medium">{totalCost} credits</span></div>
                             <div>Estimated time: <span className="font-medium">{estimatedTime} minutes</span></div>
-                            {!hasEnoughCredits && (
-                              <div className="text-red-600">⚠️ Insufficient credits (need {totalCost}, have {credits})</div>
-                            )}
                           </div>
                         </div>
                       </div>
                     )}
 
                     <div className="border-t pt-2 space-y-2">
-                      <div className="flex justify-between">
-                        <span>Credits per set:</span>
-                        <span className="font-medium">1</span>
-                      </div>
                       <div className="flex justify-between font-semibold">
-                        <span>Total Credits:</span>
-                        <span>{totalCost}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Available Credits:</span>
-                        <span className={hasEnoughCredits ? 'text-green-600' : 'text-destructive'}>
-                          {credits}
-                        </span>
+                        <span>Sets to Generate:</span>
+                        <span>{setsToGenerate}</span>
                       </div>
                     </div>
-                    {!hasEnoughCredits && totalCombinations > 0 && (
-                      <Alert variant="destructive" className="mt-2">
-                        <AlertDescription className="text-xs">
-                          Insufficient credits!
-                        </AlertDescription>
-                      </Alert>
-                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -1263,21 +1230,6 @@ function BulkGeneratorPage() {
         </div>
       </div>
 
-      {/* Style Preview Gallery Section */}
-      <div className="mt-12">
-        <StylePreviewGallery
-          styles={textStyles}
-          selectedStyle={slides[0]?.style || 'modern'}
-          onSelectStyle={(style) => {
-            // Update all slides to use this style
-            const updatedSlides = slides.map(slide => ({
-              ...slide,
-              style
-            }));
-            setSlides(updatedSlides);
-          }}
-        />
-      </div>
     </div>
   );
 }

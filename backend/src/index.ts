@@ -8,6 +8,8 @@ import { ImageGeneratorService } from './services/image-generator.service.js';
 import { BulkGeneratorService } from './services/bulk-generator.service.js';
 import { FileStorageService } from './services/file-storage.service.js';
 import { ArchiveService } from './services/archive.service.js';
+import { AuthService } from './services/auth.service.js';
+import { authMiddleware, AuthRequest } from './middleware/auth.middleware.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
@@ -30,6 +32,7 @@ const imageGenerator = new ImageGeneratorService();
 const bulkGenerator = new BulkGeneratorService();
 const fileStorage = new FileStorageService();
 const archiveService = new ArchiveService();
+const authService = new AuthService();
 
 // Serve static files from outputs directory
 app.use('/outputs', express.static(path.join(__dirname, '..', 'outputs')));
@@ -71,13 +74,67 @@ app.get('/', (req, res) => {
 });
 
 // ===================
+// AUTH ROUTES
+// ===================
+
+// Login or auto-register
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Username and password are required'
+      });
+    }
+
+    const result = await authService.loginOrRegister(username, password);
+
+    if (!result.success) {
+      return res.status(401).json(result);
+    }
+
+    res.json(result);
+  } catch (error: any) {
+    console.error('Login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Authentication failed',
+      error: error.message
+    });
+  }
+});
+
+// Verify current user
+app.get('/api/auth/me', authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    const result = await authService.verifyUser(req.userId!);
+
+    if (!result.success) {
+      return res.status(404).json(result);
+    }
+
+    res.json(result);
+  } catch (error: any) {
+    console.error('Verify user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'User verification failed',
+      error: error.message
+    });
+  }
+});
+
+// ===================
 // PROJECT ROUTES
 // ===================
 
 // Get all projects
-app.get('/api/projects', async (req, res) => {
+app.get('/api/projects', authMiddleware, async (req: AuthRequest, res) => {
   try {
     const projects = await prisma.project.findMany({
+      where: { userId: req.userId },
       orderBy: { createdAt: 'desc' }
     });
 
@@ -102,12 +159,15 @@ app.get('/api/projects', async (req, res) => {
 });
 
 // Get single project
-app.get('/api/projects/:id', async (req, res) => {
+app.get('/api/projects/:id', authMiddleware, async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
 
-    const project = await prisma.project.findUnique({
-      where: { id }
+    const project = await prisma.project.findFirst({
+      where: {
+        id,
+        userId: req.userId
+      }
     });
 
     if (!project) {
@@ -135,7 +195,7 @@ app.get('/api/projects/:id', async (req, res) => {
 });
 
 // Create new project
-app.post('/api/projects', async (req, res) => {
+app.post('/api/projects', authMiddleware, async (req: AuthRequest, res) => {
   try {
     const { title, type = 'carousel', document } = req.body;
 
@@ -150,7 +210,8 @@ app.post('/api/projects', async (req, res) => {
       data: {
         title,
         type,
-        content: JSON.stringify(document || {})
+        content: JSON.stringify(document || {}),
+        userId: req.userId!
       }
     });
 
@@ -172,10 +233,22 @@ app.post('/api/projects', async (req, res) => {
 });
 
 // Update project
-app.put('/api/projects/:id', async (req, res) => {
+app.put('/api/projects/:id', authMiddleware, async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
     const { title, type, document } = req.body;
+
+    // Verify ownership
+    const existing = await prisma.project.findFirst({
+      where: { id, userId: req.userId }
+    });
+
+    if (!existing) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found'
+      });
+    }
 
     const updateData: any = {
       updatedAt: new Date()
@@ -208,9 +281,21 @@ app.put('/api/projects/:id', async (req, res) => {
 });
 
 // Delete project
-app.delete('/api/projects/:id', async (req, res) => {
+app.delete('/api/projects/:id', authMiddleware, async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
+
+    // Verify ownership
+    const existing = await prisma.project.findFirst({
+      where: { id, userId: req.userId }
+    });
+
+    if (!existing) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found'
+      });
+    }
 
     await prisma.project.delete({
       where: { id }
@@ -238,7 +323,7 @@ app.delete('/api/projects/:id', async (req, res) => {
 // ===================
 
 // Generate single carousel
-app.post('/api/carousel/generate', async (req, res) => {
+app.post('/api/carousel/generate', authMiddleware, async (req: AuthRequest, res) => {
   try {
     const { projectId, document } = req.body;
 
@@ -304,7 +389,7 @@ app.post('/api/carousel/generate', async (req, res) => {
 });
 
 // Bulk generate carousels
-app.post('/api/carousel/bulk-generate', async (req, res) => {
+app.post('/api/carousel/bulk-generate', authMiddleware, async (req: AuthRequest, res) => {
   try {
     const { title = 'Bulk Carousel', count = 1, settings = {} } = req.body;
 
@@ -366,7 +451,7 @@ app.post('/api/carousel/bulk-generate', async (req, res) => {
 });
 
 // Download project
-app.get('/api/carousel/project/:id/download', async (req, res) => {
+app.get('/api/carousel/project/:id/download', authMiddleware, async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
     const zipPath = path.join(__dirname, '..', 'outputs', 'projects', id, 'download.zip');

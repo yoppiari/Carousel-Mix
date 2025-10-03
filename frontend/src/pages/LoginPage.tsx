@@ -4,92 +4,108 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
+    setMessage('');
 
-    const success = await login(email, password);
-    
-    if (success) {
-      navigate('/dashboard');
+    if (!username || !password) {
+      setError('Username and password are required');
+      setIsLoading(false);
+      return;
     }
-    
+
+    const result = await login(username, password);
+
+    if (result.success) {
+      if (result.isNewUser) {
+        setMessage('Welcome! Your account has been created automatically.');
+      }
+      setTimeout(() => {
+        navigate('/');
+      }, 1000);
+    } else {
+      setError(result.message || 'Login failed');
+    }
+
     setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to Carousel Pro
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <Label htmlFor="email">Email address</Label>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">🎨 Carousel Mix</CardTitle>
+          <CardDescription className="text-center">
+            Enter your credentials to login or auto-register
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-1"
-                placeholder="Enter your email"
+                id="username"
+                type="text"
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                disabled={isLoading}
+                autoComplete="username"
               />
             </div>
-            <div>
+
+            <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
-                name="password"
                 type="password"
-                autoComplete="current-password"
-                required
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1"
-                placeholder="Enter your password"
+                disabled={isLoading}
+                autoComplete="current-password"
               />
             </div>
-          </div>
 
-          <div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative text-sm">
+                {error}
+              </div>
+            )}
+
+            {message && (
+              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative text-sm">
+                {message}
+              </div>
+            )}
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Logging in...' : 'Login'}
             </Button>
-          </div>
-        </form>
 
-        {/* Test credentials helper */}
-        <div className="mt-4 p-4 bg-blue-50 rounded-md">
-          <p className="text-sm text-blue-700 font-medium">Test Credentials:</p>
-          <p className="text-sm text-blue-600 mt-1">
-            Email: demo@carouselpro.com<br />
-            Email: test@carousel.com<br />
-            Password: password123
-          </p>
-        </div>
-      </div>
+            <p className="text-xs text-center text-gray-500 mt-4">
+              Don't have an account? Just enter a new username and password - we'll create it automatically!
+            </p>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
