@@ -1,0 +1,234 @@
+/* Text Style Definitions for Carousel Generator */
+
+/* Base preview text styling */
+.preview-text {
+  position: absolute;
+  color: white;
+  font-weight: 600;
+  padding: 12px 20px;
+  text-align: center;
+  max-width: 90%;
+  word-wrap: break-word;
+  line-height: 1.3;
+  transition: all 0.3s ease;
+}
+
+/* Position Classes */
+.preview-text.pos-top {
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.preview-text.pos-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.preview-text.pos-bottom {
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Alignment Classes */
+.preview-text.align-left {
+  text-align: left;
+  left: 5% !important;
+  transform: translateX(0) !important;
+}
+
+.preview-text.align-center {
+  text-align: center;
+}
+
+.preview-text.align-right {
+  text-align: right;
+  left: auto !important;
+  right: 5% !important;
+  transform: translateX(0) !important;
+}
+
+/* Modern Style - Bold Clean Text */
+.preview-text.style-modern,
+.style-preview.style-modern {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 800;
+  background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+/* TikTok Style - Bold Outline with Shadow */
+.preview-text.style-tiktok,
+.style-preview.style-tiktok {
+  font-family: 'Arial Black', 'Arial Bold', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: white;
+  text-shadow:
+    -3px -3px 0 #000,
+    3px -3px 0 #000,
+    -3px 3px 0 #000,
+    3px 3px 0 #000,
+    -3px 0 0 #000,
+    3px 0 0 #000,
+    0 -3px 0 #000,
+    0 3px 0 #000,
+    0 0 10px rgba(255, 0, 150, 0.5),
+    0 0 20px rgba(0, 255, 255, 0.3);
+  letter-spacing: 2px;
+  background: transparent;
+}
+
+/* Instagram Style - Text with Background Box */
+.preview-text.style-instagram,
+.style-preview.style-instagram {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #FCB045 100%);
+  padding: 16px 24px;
+  border-radius: 16px;
+  box-shadow:
+    0 10px 40px rgba(131, 58, 180, 0.4),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+/* Elegant Style - Script/Handwritten */
+.preview-text.style-elegant,
+.style-preview.style-elegant {
+  font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
+  font-weight: 400;
+  font-style: italic;
+  color: white;
+  background: linear-gradient(135deg, rgba(139,69,19,0.8) 0%, rgba(101,67,33,0.8) 100%);
+  backdrop-filter: blur(5px);
+  border-radius: 8px;
+  padding: 14px 28px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  letter-spacing: 1px;
+}
+
+/* Classic Style - Serif with Elegance */
+.preview-text.style-classic,
+.style-preview.style-classic {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-weight: 700;
+  color: white;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 18px 30px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+}
+
+/* Minimalist Style - Clean and Simple */
+.preview-text.style-minimalist,
+.style-preview.style-minimalist {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif;
+  font-weight: 300;
+  text-transform: lowercase;
+  letter-spacing: 3px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(15px);
+  padding: 10px 24px;
+  border-radius: 24px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+/* Cyber Y2K Style - Futuristic Neon */
+.preview-text.style-y2k,
+.style-preview.style-y2k {
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #00ffff;
+  background: linear-gradient(135deg, rgba(138,43,226,0.8) 0%, rgba(0,191,255,0.8) 100%);
+  backdrop-filter: blur(8px);
+  border: 2px solid #00ffff;
+  border-radius: 8px;
+  padding: 14px 24px;
+  box-shadow:
+    0 0 20px rgba(0,255,255,0.6),
+    0 0 40px rgba(138,43,226,0.4),
+    inset 0 0 20px rgba(0,255,255,0.2);
+  text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+  letter-spacing: 3px;
+}
+
+/* Kinetic Style - Motion/Dynamic */
+.preview-text.style-kinetic,
+.style-preview.style-kinetic {
+  font-family: 'Arial Black', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: white;
+  background: linear-gradient(90deg, #ff006e 0%, #ffbe0b 50%, #00f5ff 100%);
+  background-size: 200% 100%;
+  animation: kinetic-gradient 3s ease infinite;
+  padding: 16px 28px;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(255,0,110,0.4);
+  letter-spacing: 2px;
+  transform: skewX(-5deg);
+}
+
+@keyframes kinetic-gradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Sketch Style - Hand-drawn/Personal */
+.preview-text.style-sketch,
+.style-preview.style-sketch {
+  font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+  font-weight: 600;
+  font-style: italic;
+  color: #2d2d2d;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+  border: 3px solid #2d2d2d;
+  border-radius: 8px;
+  padding: 14px 24px;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.2),
+    inset 0 0 0 2px rgba(255,255,255,0.5);
+  position: relative;
+}
+
+.preview-text.style-sketch::after,
+.style-preview.style-sketch::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px dashed #2d2d2d;
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+/* Dropdown Preview Styling */
+.style-preview {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.text-dropdown-preview {
+  font-size: 16px !important;
+  padding: 10px 20px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .preview-text {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+}

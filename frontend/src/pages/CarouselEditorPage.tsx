@@ -9,7 +9,6 @@ import { useCarouselStore } from '../stores/carouselStore';
 import { useUIStore } from '../stores/uiStore';
 import { projectService } from '../services/ProjectService';
 import carouselService from '../services/carousel.service';
-import { cn } from '../lib/utils';
 import { X } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useToast } from '../components/ui/use-toast';
@@ -134,7 +133,7 @@ export const CarouselEditorPage: React.FC = () => {
 
       {/* Export Container for html-to-image */}
       <div id="carousel-export-container" className="hidden">
-        {document && document.slides.map((slide, index) => (
+        {document && document.slides.map((slide) => (
           <div key={slide.id} className="slide-view">
             {/* This would be rendered properly for export */}
           </div>

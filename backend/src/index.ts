@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3003;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5174', 'http://localhost:5173', 'http://localhost:3000'],
+  origin: ['http://localhost:5178', 'http://localhost:5177', 'http://localhost:5176', 'http://localhost:5175', 'http://localhost:5174', 'http://localhost:5173', 'http://localhost:3000'],
   credentials: true
 }));
 app.use(express.json({ limit: '50mb' }));
@@ -342,7 +342,7 @@ app.post('/api/carousel/bulk-generate', async (req, res) => {
       id: `set-${index + 1}`,
       filename: `set-${set.setNumber}.zip`,
       status: 'completed',
-      downloadUrl: `/outputs/bulk/${set.zipPath}`,
+      downloadUrl: `http://localhost:${PORT}/outputs/bulk/${set.zipPath}`,
       setNumber: set.setNumber,
       files: set.files
     }));

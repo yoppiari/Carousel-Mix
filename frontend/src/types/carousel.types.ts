@@ -18,6 +18,10 @@ export interface DocumentMetadata {
   updatedAt: Date;
   author: string;
   tags?: string[];
+  type?: string;
+  totalCombinations?: number;
+  maxSets?: number;
+  setsToGenerate?: number;
 }
 
 export interface Slide {

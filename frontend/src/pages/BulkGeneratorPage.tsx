@@ -1,20 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import TextStyleSelector from '@/components/TextStyleSelector';
+import StylePreviewGallery from '@/components/StylePreviewGallery';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Upload, Sparkles, AlertCircle, Download, CheckCircle } from 'lucide-react';
+import { Loader2, Upload, Sparkles, AlertCircle, Download, CheckCircle, X } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { useCredit } from '@/contexts/CreditContext';
+import { useCredits } from '@/contexts/CreditContext';
 import carouselService from '@/services/carousel.service';
+import projectService from '@/services/project.service';
+import '../styles/text-styles.css';
 
 interface UploadedFile {
   file: File;
@@ -34,65 +37,74 @@ const textStyles = [
   {
     value: 'modern',
     label: 'Modern (Tebal)',
-    previewText: 'Modern (Tebal)',
+    previewText: 'Modern Text',
     className: 'font-bold',
-    dropdownClass: 'style-modern'
+    dropdownClass: 'style-modern',
+    description: 'Teks tebal dengan latar belakang gradient, cocok untuk konten profesional'
   },
   {
     value: 'tiktok',
     label: 'TikTok (Outline)',
-    previewText: 'TIKTOK (OUTLINE)',
+    previewText: 'VIRAL TEXT',
     className: 'font-black uppercase',
-    dropdownClass: 'style-tiktok'
+    dropdownClass: 'style-tiktok',
+    description: 'Teks outline tebal dengan efek neon, populer di TikTok'
   },
   {
     value: 'instagram',
     label: 'Instagram (Latar)',
-    previewText: 'Instagram (Latar)',
+    previewText: 'IG Story',
     className: 'font-medium',
-    dropdownClass: 'style-instagram'
+    dropdownClass: 'style-instagram',
+    description: 'Teks dengan gradient Instagram, sempurna untuk stories & reels'
   },
   {
     value: 'elegant',
     label: 'Elegan (Tulisan Tangan)',
-    previewText: 'Elegan (Tulisan Tangan)',
+    previewText: 'Elegant Style',
     className: 'italic',
-    dropdownClass: 'style-elegant'
+    dropdownClass: 'style-elegant',
+    description: 'Font script elegan, cocok untuk brand premium & lifestyle'
   },
   {
     value: 'classic',
     label: 'Classic (Serif)',
     previewText: 'Classic Text',
     className: 'font-serif font-bold',
-    dropdownClass: 'style-classic'
+    dropdownClass: 'style-classic',
+    description: 'Font serif klasik dengan border, untuk konten formal & edukasi'
   },
   {
     value: 'minimalist',
     label: 'Minimalist',
-    previewText: 'minimalist text',
+    previewText: 'minimal text',
     className: 'font-light lowercase tracking-wider',
-    dropdownClass: 'style-minimalist'
+    dropdownClass: 'style-minimalist',
+    description: 'Desain minimal bersih, cocok untuk brand modern & aesthetic'
   },
   {
     value: 'y2k',
     label: 'Cyber Y2K',
-    previewText: 'CYBER TEXT',
+    previewText: 'CYBER Y2K',
     className: 'font-bold uppercase',
-    dropdownClass: 'style-y2k'
+    dropdownClass: 'style-y2k',
+    description: 'Neon futuristik dengan efek cyber, trending untuk konten Gen-Z'
   },
   {
     value: 'kinetic',
     label: 'Kinetic (Motion)',
-    previewText: 'KINETIC TEXT',
+    previewText: 'KINETIC',
     className: 'font-black uppercase',
-    dropdownClass: 'style-kinetic'
+    dropdownClass: 'style-kinetic',
+    description: 'Gradient animasi dinamis, menarik perhatian dengan efek gerak'
   },
   {
     value: 'sketch',
     label: 'Sketch (Personal)',
     previewText: 'Sketch Style',
     className: 'italic',
-    dropdownClass: 'style-sketch'
+    dropdownClass: 'style-sketch',
+    description: 'Gaya hand-drawn personal, cocok untuk konten casual & friendly'
   }
 ];
 
@@ -128,22 +140,23 @@ function BulkGeneratorPage() {
     total: 0,
     isGenerating: false,
     estimatedTimeRemaining: 0,
-    status: 'idle' as 'idle' | 'generating' | 'completed' | 'error'
+    status: 'idle' as 'idle' | 'generating' | 'completed' | 'error' | 'initializing'
   });
 
   // Download manager states
   const [generatedFiles, setGeneratedFiles] = useState<Array<{
     id: string;
     filename: string;
-    status: 'pending' | 'downloading' | 'completed' | 'error';
+    status: 'pending' | 'downloading' | 'completed' | 'error' | 'generating';
     downloadUrl?: string;
     setNumber: number;
+    progress?: number;
   }>>([]);
 
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
-  const { credits } = useCredit();
+  const { credits } = useCredits();
 
   // Only use projectId from URL, not from localStorage
   // This ensures clicking "Bulk Generator" menu always starts fresh
@@ -186,7 +199,7 @@ function BulkGeneratorPage() {
         // Removed redundant setProjectId - we'll use urlProjectId directly
         try {
           // Load the project from backend
-          const project = await carouselService.getProject(effectiveProjectId);
+          const project = await projectService.getById(effectiveProjectId);
 
           // Parse the configuration
           let config;
@@ -245,7 +258,7 @@ function BulkGeneratorPage() {
         } catch (error) {
           console.error('[BulkGenerator] Failed to load project:', error);
           // Phase 3: Error recovery - clear invalid projectId
-          if (error.response?.status === 404) {
+          if ((error as any).response?.status === 404) {
             localStorage.removeItem('currentBulkProjectId');
             toast({
               title: 'Project Not Found',
@@ -340,6 +353,13 @@ function BulkGeneratorPage() {
     setSlides(newSlides);
   };
 
+  // Handle delete image
+  const handleDeleteImage = (slideIndex: number, imageIndex: number) => {
+    const newSlides = [...slides];
+    newSlides[slideIndex].images = newSlides[slideIndex].images.filter((_, idx) => idx !== imageIndex);
+    setSlides(newSlides);
+  };
+
   // Update slide config
   const updateSlideConfig = (index: number, field: keyof SlideConfig, value: any) => {
     const newSlides = [...slides];
@@ -394,7 +414,7 @@ function BulkGeneratorPage() {
       console.log('[BulkGenerator] Starting save with projectId:', effectiveProjectId);
 
       // Prepare carousel configuration document
-      const document = {
+      const document: any = {
         metadata: {
           title: projectTitle,
           type: 'bulk',
@@ -408,7 +428,7 @@ function BulkGeneratorPage() {
           height: 1080,
           slideCount
         },
-        slides: slides.slice(0, slideCount).map((slide, index) => ({
+        slides: slides.slice(0, slideCount).map((slide, index) => ({ // eslint-disable-line @typescript-eslint/no-unused-vars
           slideNumber: index + 1,
           mediaFiles: slide.images.map(img => ({
             preview: img.preview,
@@ -423,17 +443,14 @@ function BulkGeneratorPage() {
             style: slide.style,
             fontSize: slide.fontSize
           }
-        }))
+        })) as any
       };
 
       // Save or update project based on whether we have a projectId
       let response;
       if (urlProjectId) {
         // Update existing project
-        response = await carouselService.updateProject(urlProjectId, {
-          title: projectTitle,
-          document: document
-        });
+        response = await projectService.update(urlProjectId, projectTitle, document as any);
         toast({
           title: 'Success',
           description: 'Bulk generator configuration updated successfully',
@@ -441,10 +458,7 @@ function BulkGeneratorPage() {
       } else {
         // Create new project
         console.log('[BulkGenerator] API call: CREATE new project');
-        response = await carouselService.createProject({
-          title: projectTitle,
-          document: document
-        });
+        response = await projectService.create(projectTitle, document as any);
         toast({
           title: 'Success',
           description: 'Bulk generator configuration saved successfully',
@@ -556,12 +570,11 @@ function BulkGeneratorPage() {
       }));
 
       // Use the correct field names for backend
-      const response = await carouselService.generateBulk({
-        title: projectTitle,
-        settings: settings as any,
-        count: setsToGenerate,
-        format: 'png',
-      });
+      const response = await carouselService.bulkGenerate(
+        projectTitle,
+        setsToGenerate,
+        settings
+      );
 
       // Check if backend returned generated files
       if (response.generatedFiles && response.generatedFiles.length > 0) {
@@ -753,12 +766,19 @@ function BulkGeneratorPage() {
                         {slide.images.length > 0 && (
                           <div className="mt-3 grid grid-cols-4 gap-2">
                             {slide.images.map((img, imgIndex) => (
-                              <div key={imgIndex} className="relative aspect-square">
+                              <div key={imgIndex} className="relative aspect-square group">
                                 <img
                                   src={img.preview}
                                   alt={`Preview ${imgIndex + 1}`}
                                   className="w-full h-full object-cover rounded"
                                 />
+                                <button
+                                  onClick={() => handleDeleteImage(index, imgIndex)}
+                                  className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  title="Delete image"
+                                >
+                                  <X className="h-4 w-4" />
+                                </button>
                               </div>
                             ))}
                           </div>
@@ -1241,6 +1261,22 @@ function BulkGeneratorPage() {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* Style Preview Gallery Section */}
+      <div className="mt-12">
+        <StylePreviewGallery
+          styles={textStyles}
+          selectedStyle={slides[0]?.style || 'modern'}
+          onSelectStyle={(style) => {
+            // Update all slides to use this style
+            const updatedSlides = slides.map(slide => ({
+              ...slide,
+              style
+            }));
+            setSlides(updatedSlides);
+          }}
+        />
       </div>
     </div>
   );

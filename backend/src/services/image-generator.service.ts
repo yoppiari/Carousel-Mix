@@ -7,7 +7,7 @@ import {
   ThemeSettings,
   BrandSettings,
   FontSettings
-} from '../types/carousel.types.js';
+} from '../types/carousel.types';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
@@ -300,7 +300,7 @@ export class ImageGeneratorService {
     const y = element.position.y;
 
     // Set text alignment
-    ctx.textAlign = (style.textAlign as CanvasTextAlign) || 'center';
+    ctx.textAlign = (style.textAlign as any) || 'center';
     ctx.textBaseline = 'middle';
 
     // Apply style-specific rendering
@@ -508,6 +508,10 @@ export class ImageGeneratorService {
    * Get font family based on style
    */
   private getFontFamily(style: string, fonts?: FontSettings): string {
+    if (fonts?.title && typeof fonts.title === 'object' && 'family' in fonts.title) {
+      return fonts.title.family;
+    }
+
     switch(style) {
       case 'elegant':
         return "'Dancing Script', 'Brush Script MT', cursive";
@@ -516,7 +520,10 @@ export class ImageGeneratorService {
       case 'y2k':
         return "'Orbitron', 'Courier New', monospace";
       default:
-        return fonts?.body || "'Inter', 'Arial', sans-serif";
+        if (fonts?.body && typeof fonts.body === 'object' && 'family' in fonts.body) {
+          return fonts.body.family;
+        }
+        return "'Inter', 'Arial', sans-serif";
     }
   }
 
@@ -715,7 +722,7 @@ export class ImageGeneratorService {
         }
 
         // Draw cropped image to fill entire target area
-        this.ctx.drawImage(
+        (this.ctx as any).drawImage(
           image,
           srcX, srcY, srcW, srcH,  // Source rectangle (cropped)
           x, y, width, height       // Destination rectangle (full size)

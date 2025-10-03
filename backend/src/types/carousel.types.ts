@@ -52,6 +52,11 @@ export interface ElementStyle {
   textAlign?: 'left' | 'center' | 'right' | 'justify';
   opacity?: number;
   transform?: string;
+  textStyle?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+  textShadow?: string;
+  objectFit?: string;
 }
 
 export interface SlideBackground {

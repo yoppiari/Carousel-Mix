@@ -1,6 +1,6 @@
-import { ImageGeneratorService } from './image-generator.service.js';
-import { FileStorageService } from './file-storage.service.js';
-import { ArchiveService } from './archive.service.js';
+import { ImageGeneratorService } from './image-generator.service';
+import { FileStorageService } from './file-storage.service';
+import { ArchiveService } from './archive.service';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 
@@ -14,7 +14,9 @@ interface SlideConfig {
 }
 
 interface BulkGenerationConfig {
-  projectTitle: string;
+  projectTitle?: string;
+  title?: string;
+  count?: number;
   slideCount: number;
   slides: SlideConfig[];
   setsToGenerate: number;
@@ -23,6 +25,7 @@ interface BulkGenerationConfig {
   theme?: any;
   brand?: any;
   fonts?: any;
+  settings?: any;
 }
 
 interface GeneratedSet {

@@ -1,27 +1,20 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useCredit } from '@/contexts/CreditContext';
-import { Button } from '@/components/ui/button';
+import { useCredits } from '@/contexts/CreditContext';
 import {
-  LayoutDashboard,
   Edit3,
   Package,
-  CreditCard,
-  LogOut,
   Layers,
 } from 'lucide-react';
 
 function Layout() {
-  const { user, logout } = useAuth();
-  const { credits } = useCredit();
-  const navigate = useNavigate();
+  const { user } = useAuth();
+  useCredits(); // Initialize credits context
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Editor', href: '/editor', icon: Edit3 },
     { name: 'Bulk Generator', href: '/bulk-generator', icon: Layers },
     { name: 'Projects', href: '/projects', icon: Package },
-    { name: 'Credit Usage', href: '/credit-usage', icon: CreditCard },
   ];
 
   return (
@@ -29,7 +22,7 @@ function Layout() {
       <div className="flex h-screen overflow-hidden">
         <nav className="flex flex-col w-64 bg-white border-r border-gray-200">
           <div className="flex items-center justify-between p-4 border-b">
-            <h1 className="text-xl font-bold text-gray-900">Carousel Pro</h1>
+            <h1 className="text-xl font-bold text-gray-900">Carousel Mix</h1>
           </div>
 
           <div className="flex-1 overflow-y-auto">
@@ -60,25 +53,15 @@ function Layout() {
           </div>
 
           <div className="border-t border-gray-200 p-4">
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-500">Credits</span>
-                <span className="text-lg font-semibold text-gray-900">
-                  {credits}
-                </span>
-              </div>
-              <div className="text-xs text-gray-500">
-                {user?.email}
-              </div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-500">Credits</span>
+              <span className="text-lg font-semibold text-gray-900">
+                ∞
+              </span>
             </div>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={logout}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
+            <div className="text-xs text-gray-500">
+              {user?.email}
+            </div>
           </div>
         </nav>
 
